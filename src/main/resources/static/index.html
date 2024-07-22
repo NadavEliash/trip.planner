@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Trip Planner</title>
+</head>
+<body>
+    <div>
+        <h1>Welcome to Trip Planner</h1>
+
+        <form id="form">
+            <label for="destination">I wish to travel to</label>
+            <input type="text" name="destination" id="destination" required/>
+
+            <label for="startDate">From</label>
+            <input type="date" name="startDate" id="startDate">
+
+            <label for="endDate">To</label>
+            <input type="date" name="endDate" id="endDate">
+
+            <input type="submit" value="Plan my trip!"/>
+        </form>
+    </div>
+    <div style="width: 50%">
+        <p id="answer"></p>
+    </div>
+</body>
+<script>
+        const form = document.getElementById("form");
+        const answer = document.getElementById("answer")
+
+        form.addEventListener("submit", (e)=> {
+            e.preventDefault()
+            getData(e.target[0].value, e.target[1].value, e.target[2].value)
+        });
+
+        async function getData(destination, startDate, endDate) {
+            const response = await fetch(`/trip?destination=${destination}&from=${startDate}&to=${endDate}`)
+            const text = await response.text()
+            answer.innerText = "Your Trip: \n" + text
+        }
+</script>
+</html>
