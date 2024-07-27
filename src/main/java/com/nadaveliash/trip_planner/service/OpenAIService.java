@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 
 @Service
-
 public class OpenAIService {
 
     @Autowired
@@ -33,8 +32,8 @@ public class OpenAIService {
                 + "\"messages\": ["
                 + "{"
                 + "\"role\": \"user\","
-                + "\"content\": \"plan a trip to: " + destination + "from" + startDate + "to" + endDate
-                + ". Answer as the following instructions: without opening sentence. Just list of places to visit, each place separated by comma, without any description" + "\""
+                + "\"content\": \"plan a trip to: " + destination + " from " + startDate.toString() + " to " + endDate.toString()
+                + ". Answer as the following instructions: without opening sentence. Just a list of places to visit, without any description, formatted as an array of objects, which contains \\\"destination\\\"(place name) and \\\"day\\\"(visit day in the trip)\""
                 + "}"
                 + "]"
                 + "}";

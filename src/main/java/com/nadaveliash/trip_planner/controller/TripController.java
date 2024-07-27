@@ -1,7 +1,10 @@
 package com.nadaveliash.trip_planner.controller;
 
+import com.nadaveliash.trip_planner.model.Landmark;
+import com.nadaveliash.trip_planner.model.LatLng;
 import com.nadaveliash.trip_planner.service.GeocodeService;
 import com.nadaveliash.trip_planner.service.OpenAIService;
+import com.nadaveliash.trip_planner.service.RouteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequestMapping("")
@@ -22,6 +26,8 @@ public class TripController {
     OpenAIService openaiService;
     @Autowired
     private GeocodeService geocodeService;
+    @Autowired
+    private RouteService routeService;
 
     @RequestMapping (value="/trip", method = RequestMethod.GET)
     public ResponseEntity<?> getTrip(@RequestParam(value = "destination") String destination,
@@ -32,7 +38,12 @@ public class TripController {
     }
 
     @RequestMapping (value = "/geocode", method = RequestMethod.GET)
-    public ResponseEntity<?> getLatLng(@RequestParam(value = "address") String address) throws IOException {
-        return new ResponseEntity<>(geocodeService.getLatLng(address), HttpStatus.OK);
+    public ResponseEntity<?> getLocations(@RequestParam(value = "landmarks") String landmarks) throws IOException {
+        return new ResponseEntity<>(geocodeService.getLocations(landmarks), HttpStatus.OK);
+    }
+
+    @RequestMapping (value = "/route", method = RequestMethod.POST)
+    public List<String> getRoute(@RequestParam(value = "locations") String locations) throws IOException {
+        return routeService.getRoutes(locations);
     }
 }
