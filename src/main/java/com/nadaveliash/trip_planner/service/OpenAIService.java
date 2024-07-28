@@ -33,7 +33,7 @@ public class OpenAIService {
                 + "{"
                 + "\"role\": \"user\","
                 + "\"content\": \"plan a trip to: " + destination + " from " + startDate.toString() + " to " + endDate.toString()
-                + ". Answer as the following instructions: without opening sentence. Just a list of places to visit, without any description, formatted as an array of objects, which contains \\\"destination\\\"(place name) and \\\"day\\\"(visit day in the trip)\""
+                + ". Answer as the following instructions: without opening sentence. Just a list of places to visit, without any description, formatted as an array of objects, which contains \\\"destination\\\"(place name) and \\\"day\\\"(visit date)\""
                 + "}"
                 + "]"
                 + "}";
@@ -53,6 +53,8 @@ public class OpenAIService {
 
             assert response.body() != null;
             ChatResponse res = om.readValue(response.body().string(), ChatResponse.class);
+
+            // System.out.println("openAI results: " + res.getChoices().getFirst().getMessage().getContent());
             return res.getChoices().getFirst().getMessage().getContent();
         }
     }

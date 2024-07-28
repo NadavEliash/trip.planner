@@ -3,6 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>Trip Planner</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key="></script>
+    <style>
+        #map {
+            height: 60%;
+            margin: 2rem;
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 6px;
+        }
+    </style>
 </head>
 <body>
     <div>
@@ -21,11 +33,11 @@
             <input type="submit" value="Plan my trip!"/>
         </form>
     </div>
+    <div id="map"></div>
     <div style="width: 50%">
         <p id="answer"></p>
     </div>
-</body>
-<script>
+    <script>
         const form = document.getElementById("form");
         const answer = document.getElementById("answer")
 
@@ -35,9 +47,58 @@
         });
 
         async function getData(destination, startDate, endDate) {
-            const response = await fetch(`/trip?destination=${destination}&from=${startDate}&to=${endDate}`)
+            const response = await fetch(`/track?destination=${destination}&from=${startDate}&to=${endDate}`)
             const text = await response.text()
-            answer.innerText = "Your Trip: \n" + text
+
+            const track = JSON.parse(text)
+            const landmarks = track.landmarks
+            const routes = track.routes
+
+            let innerText = ""
+            for (let i = 0; i < landmarks.length -1; i++) {
+                i === landmarks.length - 2 ? innerText += landmarks[i].destination
+                : innerText += landmarks[i].destination + ", \n"
+            }
+            answer.innerText = "Your Trip: \n" + innerText
+
+            let polylines = []
+            for (let i = 0; i < routes.length ; i++) {
+                const route = JSON.parse(routes[i])
+                if (route.routes && route.routes.length) {
+                polylines.push(route.routes[0].polyline.encodedPolyline)
+                }
+            }
         }
-</script>
+
+        function initMap() {
+            // Define the map center and zoom level
+            var mapCenter = {lat: 37.7749, lng: -122.4194}; // Example coordinates (San Francisco)
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 14,
+                center: mapCenter
+            });
+
+            // Your encoded polyline from the Google API
+            var encodedPolyline = polylines[0];
+
+            // Decode the polyline using the Polyline library
+            var decodedPath = google.maps.geometry.encoding.decodePath(encodedPolyline);
+
+            // Create a Polyline and set its path
+            var polyline = new google.maps.Polyline({
+                path: decodedPath,
+                geodesic: true,
+                strokeColor: '#FF0000',
+                strokeOpacity: 1.0,
+                strokeWeight: 2
+            });
+
+            // Set the polyline on the map
+            polyline.setMap(map);
+        }
+
+        // Initialize the map
+        google.maps.event.addDomListener(window, 'load', initMap);
+    </script>
+</body>
 </html>

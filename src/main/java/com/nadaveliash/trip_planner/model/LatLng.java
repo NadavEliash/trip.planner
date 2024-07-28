@@ -1,30 +1,38 @@
 package com.nadaveliash.trip_planner.model;
 
 public class LatLng {
-    private double lat;
-    private double lng;
+    private String lat;
+    private String lng;
 
     public LatLng() {
     }
 
-    public LatLng(double lat, double lng) {
+    public LatLng(String lat, String lng) {
         this.lat = lat;
         this.lng = lng;
     }
 
-    public double getLat() {
+    public String getLat() {
         return lat;
     }
 
-    public void setLat(double lat) {
+    public void setLat(String lat) {
         this.lat = lat;
     }
 
-    public double getLng() {
+    public String getLng() {
         return lng;
     }
 
-    public void setLng(double lng) {
+    public void setLng(String lng) {
         this.lng = lng;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "\"lat\": \"" + lat + "\"," +
+                "\"lng\": \"" + lng + "\"" +
+                "}";
     }
 }

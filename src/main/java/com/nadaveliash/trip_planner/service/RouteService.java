@@ -3,7 +3,10 @@ package com.nadaveliash.trip_planner.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nadaveliash.trip_planner.config.GoogleConfig;
+import com.nadaveliash.trip_planner.model.Landmark;
 import com.nadaveliash.trip_planner.model.LatLng;
+import com.nadaveliash.trip_planner.model.RouteResponse;
+import com.nadaveliash.trip_planner.model.Track;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -75,20 +78,31 @@ public class RouteService {
         }
     }
 
-    public List<String> getRoutes(String JsonLocations) throws IOException {
-        List<LatLng> locations = om.readValue(JsonLocations, new TypeReference<List<LatLng>>() {});
+    public Track getRoutes(String jsonLandmarks) throws IOException {
+        List<Landmark> landmarks = om.readValue(jsonLandmarks, new TypeReference<List<Landmark>>() {});
 
-        if (locations == null || locations.size() < 2) {
+        if (landmarks == null || landmarks.size() < 2) {
             throw new IllegalArgumentException("At least two locations (origin and destination) are required");
         }
 
         List<String> routes = new ArrayList<>();
-        for (int i = 0; i < locations.size() - 1; i++) {
-            LatLng origin = locations.get(i);
-            LatLng destination = locations.get(i + 1);
+        for (int i = 0; i < landmarks.size() - 1; i++) {
+            LatLng origin = new LatLng();
+            origin.setLat(landmarks.get(i).getLat()+"");
+            origin.setLng(landmarks.get(i).getLng()+"");
+
+            LatLng destination = new LatLng();
+            destination.setLat(landmarks.get(i + 1).getLat()+"");
+            destination.setLng(landmarks.get(i + 1).getLng()+"");
+
             String route = getRoute(origin, destination);
             routes.add(route);
         }
-        return routes;
+
+        Track track = new Track();
+        track.setRoutes(routes);
+        track.setLandmarks(landmarks);
+
+        return track;
     }
 }
