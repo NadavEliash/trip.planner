@@ -28,13 +28,17 @@ public class GeocodeService {
 
     private final OkHttpClient client = new OkHttpClient();
 
-    public Landmark getLatLng(String address, String day) throws IOException {
+    public LatLng getLatLng(String address
+//            , String day
+    ) throws IOException {
         String apiKey = googleConfig.getGoogleApiKey();
         String apiUrl = googleConfig.getGeocodeUrl();
 
-        Landmark landmark = new Landmark();
-        landmark.setDestination(address);
-        landmark.setDay(day);
+//        Landmark landmark = new Landmark();
+//        landmark.setDestination(address);
+//        landmark.setDay(day);
+        LatLng latLng = new LatLng();
+
         Request request = new Request.Builder()
                 .url(apiUrl + address + "&key=" + apiKey)
                 .addHeader("x-rapidapi-host", "google-maps-geocoding.p.rapidapi.com")
@@ -50,8 +54,8 @@ public class GeocodeService {
 
             if (geocodeResponse.getResults() != null && !geocodeResponse.getResults().isEmpty()) {
                 GeocodeResponse.Result.Geometry.Location location = geocodeResponse.getResults().get(0).getGeometry().getLocation();
-                landmark.setLat(location.getLat());
-                landmark.setLng(location.getLng());
+                latLng.setLat(location.getLat());
+                latLng.setLng(location.getLng());
             } else {
                 throw new IllegalArgumentException("No results found in the response");
             }
@@ -59,28 +63,28 @@ public class GeocodeService {
             System.err.println("Error in getLatLng: " + e.getMessage());
         }
 
-        return landmark;
+        return latLng;
     }
 
-    public String getLandmarks(String strLandmarks) throws IOException {
-        List<Landmark> landmarks = new ArrayList<>();
+//    public String getLandmarks(String strLandmarks) throws IOException {
+//        List<Landmark> landmarks = new ArrayList<>();
+//
+//        String jsonLandmarks = cropJsonArray(strLandmarks);
+//        if (jsonLandmarks != null) {
+//            List<Landmark> addresses = om.readValue(jsonLandmarks, new TypeReference<List<Landmark>>() {
+//            });
+//
+//            for (int i = 0; i < addresses.size() - 1; i++) {
+//                Landmark landmark = getLatLng(addresses.get(i).getDestination(), addresses.get(i).getDay());
+//                landmarks.add(landmark);
+//            }
+//        }
+//
+//        // System.out.println("landmarks: " + landmarks);
+//        return landmarks.toString();
+//    }
 
-        String jsonLandmarks = cropJsonArray(strLandmarks);
-        if (jsonLandmarks != null) {
-            List<Landmark> addresses = om.readValue(jsonLandmarks, new TypeReference<List<Landmark>>() {
-            });
-
-            for (int i = 0; i < addresses.size() - 1; i++) {
-                Landmark landmark = getLatLng(addresses.get(i).getDestination(), addresses.get(i).getDay());
-                landmarks.add(landmark);
-            }
-        }
-
-        // System.out.println("landmarks: " + landmarks);
-        return landmarks.toString();
-    }
-
-    public static String cropJsonArray(String input) {
+    public String cropJsonArray(String input) {
         Pattern pattern = Pattern.compile("\\[\\s*\\{.*?\\}\\s*\\]", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(input);
 

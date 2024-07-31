@@ -2,14 +2,14 @@ package com.nadaveliash.trip_planner.model;
 
 import java.util.List;
 
-public class Track {
+public class Trip {
     private List<Landmark> landmarks;
     private List<String> routes;
 
-    public Track() {
+    public Trip() {
     }
 
-    public Track(List<Landmark> landmarks, List<String> routes) {
+    public Trip(List<Landmark> landmarks, List<String> routes) {
         this.landmarks = landmarks;
         this.routes = routes;
     }

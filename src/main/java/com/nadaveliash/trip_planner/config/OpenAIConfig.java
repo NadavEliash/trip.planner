@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+
 public class OpenAIConfig {
     @Value("${OpenAI.key}")
     private String openAIKey;

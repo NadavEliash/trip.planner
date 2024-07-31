@@ -34,12 +34,12 @@
         });
 
         async function getData(destination, startDate, endDate) {
-            const response = await fetch(`/track?destination=${destination}&from=${startDate}&to=${endDate}`)
+            const response = await fetch(`/trip?destination=${destination}&from=${startDate}&to=${endDate}`)
             const text = await response.text()
 
-            const track = JSON.parse(text)
-            const landmarks = track.landmarks
-            const routes = track.routes
+            const trip = JSON.parse(text)
+            const landmarks = trip.landmarks
+            const routes = trip.routes
 
             let innerText = ""
             for (let i = 0; i < landmarks.length -1; i++) {

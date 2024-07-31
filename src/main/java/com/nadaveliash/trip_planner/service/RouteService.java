@@ -5,8 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nadaveliash.trip_planner.config.GoogleConfig;
 import com.nadaveliash.trip_planner.model.Landmark;
 import com.nadaveliash.trip_planner.model.LatLng;
-import com.nadaveliash.trip_planner.model.RouteResponse;
-import com.nadaveliash.trip_planner.model.Track;
+import com.nadaveliash.trip_planner.model.Trip;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +13,8 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class RouteService {
@@ -78,7 +79,8 @@ public class RouteService {
         }
     }
 
-    public Track getRoutes(String jsonLandmarks) throws IOException {
+    public Trip getRoutes(String strLandmarks) throws IOException {
+        String jsonLandmarks = cropJsonArray(strLandmarks);
         List<Landmark> landmarks = om.readValue(jsonLandmarks, new TypeReference<List<Landmark>>() {});
 
         if (landmarks == null || landmarks.size() < 2) {
@@ -99,10 +101,21 @@ public class RouteService {
             routes.add(route);
         }
 
-        Track track = new Track();
-        track.setRoutes(routes);
-        track.setLandmarks(landmarks);
+        Trip trip = new Trip();
+        trip.setRoutes(routes);
+        trip.setLandmarks(landmarks);
 
-        return track;
+        return trip;
+    }
+
+    public String cropJsonArray(String input) {
+        Pattern pattern = Pattern.compile("\\[\\s*\\{.*?\\}\\s*\\]", Pattern.DOTALL);
+        Matcher matcher = pattern.matcher(input);
+
+        if (matcher.find()) {
+            return matcher.group();
+        } else {
+            return null;
+        }
     }
 }
