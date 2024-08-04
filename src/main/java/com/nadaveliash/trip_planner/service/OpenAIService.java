@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class OpenAIService {
@@ -54,21 +56,26 @@ public class OpenAIService {
             assert response.body() != null;
             ChatResponse res = om.readValue(response.body().string(), ChatResponse.class);
 
-            // System.out.println("openAI results: " + res.getChoices().getFirst().getMessage().getContent());
-            return res.getChoices().getFirst().getMessage().getContent();
+            String raw = res.getChoices().getFirst().getMessage().getContent();
+            return cropJsonArray(raw);
         }
     }
 
     public String getDayTrip(String day ,String places, String options) {
+        if (options != null && !options.isEmpty()) {
+            options = options + ". Please add recommendations of ";
+        } else {
+            options = "";
+        }
 
         String json = "{"
                 + "\"model\": \"gpt-4o-mini\","
                 + "\"messages\": ["
                 + "{"
                 + "\"role\": \"user\","
-                + "\"content\": \"describe, shortly, a day trip on " + day + "(dd/MM), to: " + places
-                + " please add recommendations of " + options
-                + "\""
+                + "\"content\": \"describe, shortly, a day trip on " + day + " (formatted dd/MM), to: " + places
+                + options
+                + ". Answer according to the following instructions: formatted as json object, which contains \\\"description\\\"(short description of the day trip), \\\"places\\\"(array of places names to visit in this day), \\\"recommendations\\\"(array of additional recommendations, if there is any)\""
                 + "}"
                 + "]"
                 + "}";
@@ -88,10 +95,34 @@ public class OpenAIService {
 
             assert response.body() != null;
             ChatResponse res = om.readValue(response.body().string(), ChatResponse.class);
-            return res.getChoices().getFirst().getMessage().getContent();
+
+            String raw = res.getChoices().getFirst().getMessage().getContent();
+            return cropJsonObject(raw);
 
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public String cropJsonArray(String input) {
+        Pattern pattern = Pattern.compile("\\[\\s*\\{.*?\\}\\s*\\]", Pattern.DOTALL);
+        Matcher matcher = pattern.matcher(input);
+
+        if (matcher.find()) {
+            return matcher.group();
+        } else {
+            return null;
+        }
+    }
+
+    public String cropJsonObject(String input) {
+        Pattern pattern = Pattern.compile("\\{.*?\\}", Pattern.DOTALL);
+        Matcher matcher = pattern.matcher(input);
+
+        if (matcher.find()) {
+            return matcher.group();
+        } else {
+            return null;
         }
     }
 }

@@ -8,14 +8,7 @@ public class GoogleConfig {
     @Value("${GoogleApi.key}")
     private String GoogleApiKey;
 
-    @Value("${Geocode.url}")
-    private String GeocodeUrl;
-
     public String getGoogleApiKey() {
         return GoogleApiKey;
-    }
-
-    public String getGeocodeUrl() {
-        return GeocodeUrl;
     }
 }

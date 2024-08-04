@@ -32,15 +32,15 @@ public class GeocodeService {
 //            , String day
     ) throws IOException {
         String apiKey = googleConfig.getGoogleApiKey();
-        String apiUrl = googleConfig.getGeocodeUrl();
 
 //        Landmark landmark = new Landmark();
 //        landmark.setDestination(address);
 //        landmark.setDay(day);
+
         LatLng latLng = new LatLng();
 
         Request request = new Request.Builder()
-                .url(apiUrl + address + "&key=" + apiKey)
+                .url("https://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&key=" + apiKey)
                 .addHeader("x-rapidapi-host", "google-maps-geocoding.p.rapidapi.com")
                 .addHeader("x-rapidapi-key", "")
                 .get()

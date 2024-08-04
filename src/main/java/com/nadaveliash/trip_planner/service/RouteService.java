@@ -79,8 +79,7 @@ public class RouteService {
         }
     }
 
-    public Trip getRoutes(String strLandmarks) throws IOException {
-        String jsonLandmarks = cropJsonArray(strLandmarks);
+    public Trip getRoutes(String jsonLandmarks) throws IOException {
         List<Landmark> landmarks = om.readValue(jsonLandmarks, new TypeReference<List<Landmark>>() {});
 
         if (landmarks == null || landmarks.size() < 2) {
@@ -106,16 +105,5 @@ public class RouteService {
         trip.setLandmarks(landmarks);
 
         return trip;
-    }
-
-    public String cropJsonArray(String input) {
-        Pattern pattern = Pattern.compile("\\[\\s*\\{.*?\\}\\s*\\]", Pattern.DOTALL);
-        Matcher matcher = pattern.matcher(input);
-
-        if (matcher.find()) {
-            return matcher.group();
-        } else {
-            return null;
-        }
     }
 }
