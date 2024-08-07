@@ -89,4 +89,12 @@ public class TripController {
     public ResponseEntity<?> getPhoto(@RequestParam(value = "name") String name) throws IOException {
         return new ResponseEntity<>(placeService.getPlacePhoto(name), HttpStatus.OK);
     }
+
+    @RequestMapping(value = "/recommendation", method = RequestMethod.GET)
+    public ResponseEntity<?> getRecommendation(@RequestParam(value = "day") String day,
+                                               @RequestParam(value = "places") String places,
+                                               @RequestParam(value = "options") String options) throws IOException {
+        return new ResponseEntity<>(openaiService.getRecommendation(day, places, options), HttpStatus.OK);
+    }
+
 }

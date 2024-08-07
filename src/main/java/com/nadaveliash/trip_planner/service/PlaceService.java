@@ -87,7 +87,7 @@ public class PlaceService {
             String apiKey = googleConfig.getGoogleApiKey();
 
         Request request = new Request.Builder()
-                .url("https://places.googleapis.com/v1/" + name + "/media?maxHeightPx=400&maxWidthPx=400&skipHttpRedirect=true&key=" + apiKey)
+                .url("https://places.googleapis.com/v1/" + name + "/media?maxHeightPx=1080&maxWidthPx=1920&skipHttpRedirect=true&key=" + apiKey)
                 .addHeader("Content-Type", "application/json")
                 .build();
 

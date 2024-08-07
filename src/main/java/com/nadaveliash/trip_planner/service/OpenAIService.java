@@ -104,6 +104,45 @@ public class OpenAIService {
         }
     }
 
+    public String getRecommendation(String day ,String places, String options) {
+
+        String json = "{"
+                + "\"model\": \"gpt-4o-mini\","
+                + "\"messages\": ["
+                + "{"
+                + "\"role\": \"user\","
+                + "\"content\": \"Please describe 3-4 specific recommendations on " + options
+                + " for a day trip on " + day + " (dd/MM format), to: " + places
+                + ". Answer according to the following instructions: Without opening sentence, without any headline. short descriptions for each recommend, formatted like Json array of strings\""
+                + "}"
+                + "]"
+                + "}";
+
+        RequestBody body = RequestBody.create(json, JSON);
+        Request request = new Request.Builder()
+                .url(openaiConfig.getOpenAIUrl())
+                .addHeader("Authorization", "Bearer " + openaiConfig.getOpenAIKey())
+                .addHeader("Content-Type", "application/json")
+                .post(body)
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response);
+            }
+
+            assert response.body() != null;
+            ChatResponse res = om.readValue(response.body().string(), ChatResponse.class);
+
+            String raw = res.getChoices().getFirst().getMessage().getContent();
+            return raw;
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
     public String cropJsonArray(String input) {
         Pattern pattern = Pattern.compile("\\[\\s*\\{.*?\\}\\s*\\]", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(input);
