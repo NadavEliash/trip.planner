@@ -97,4 +97,8 @@ public class TripController {
         return new ResponseEntity<>(openaiService.getRecommendation(day, places, options), HttpStatus.OK);
     }
 
+//    @RequestMapping(value = "/{path:[^\\.]*}")
+//    public String forward() {
+//        return "Hello";
+//    }
 }
